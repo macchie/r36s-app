@@ -11,7 +11,7 @@ build: clean
 	@chmod +x r36s-app/r36s-app
 
 build-native: clean
-	bun build main-native.ts --compile --minify --target=bun-linux-arm64 --baseline --outfile ././r36s-app/r36s-app
+	bun build main-native.ts --compile --minify --target=bun-linux-arm64 --baseline --outfile ./r36s-app/r36s-app
 	@chmod +x ./r36s-app/r36s-app
 
 deploy:
