@@ -1,146 +1,171 @@
-# R36S APP
+# R36S Dashboard 📊
 
-A system status dashboard for the **R36S handheld** (Panel 4 / RK3326). Written in TypeScript, compiled to a standalone ARM64 binary with [Bun](https://bun.sh).
+[![Bun Version](https://img.shields.io/badge/Bun-%3E%3D1.0-blue?logo=bun&logoColor=white)](https://bun.sh)
+[![Platform](https://img.shields.io/badge/Platform-R36S%20%2F%20RK3326-red)](https://github.com/sdolai/r36s-dashboard)
+[![Release](https://img.shields.io/github/v/release/sdolai/r36s-dashboard?color=green&logo=github)](https://github.com/sdolai/r36s-dashboard/releases)
+[![License: ISC](https://img.shields.io/badge/License-ISC-yellow.svg)](https://opensource.org/licenses/ISC)
 
-**Zero runtime dependencies** -- no X11, no SDL, no GPU drivers.
+A premium system status dashboard for the **R36S handheld gaming console** (Panel 4 / Rockchip RK3326 SoC). Built in **TypeScript** and compiled into a single self-contained, high-performance ARM64 binary with [Bun](https://bun.sh).
 
-## Build Variants
+> [!NOTE]  
+> **Zero runtime dependencies:** Works without X11, SDL, or GPU drivers. Renders directly to the hardware!
 
-| Variant | Entry Point | Rendering | Description |
-|---------|-------------|-----------|-------------|
-| **Framebuffer** | `main.ts` | `/dev/fb0` direct pixel writes | Full graphical UI with 8x8 bitmap font, 640x480 BGRA 32bpp |
-| **Native** | `main-native.ts` | ANSI escape codes on `/dev/tty1` | Terminal UI using 16-color VT codes, 80x30 chars (fbcon 8x16 font) |
+---
 
-Both variants read gamepad input from `/dev/input/event*` (evdev) and support the `--dry-run` flag for local development.
+## 📺 Build Variants
 
-## Prerequisites
+| Variant | Entry Point | Rendering Engine | Description |
+| :--- | :--- | :--- | :--- |
+| **Framebuffer** | `main.ts` | `/dev/fb0` direct pixel writes | Standard GUI with 8x8 bitmap font, 640x480 BGRA 32bpp resolution. |
+| **Native TUI** | `main-native.ts` | ANSI escape codes on `/dev/tty1` | Terminal UI using 16-color VT escape codes (80x30 characters, using the console's 8x16 font). |
 
-- [Bun](https://bun.sh) runtime (v1.0+)
-- `make`
-- An R36S device with ArkOS, ROCKNIX, or AmberELEC (for running on hardware)
+Both versions read controller inputs directly via Linux `evdev` (`/dev/input/event*`) and support a `--dry-run` flag for convenient local testing.
 
-## Install Dependencies
+---
 
+## 🛠️ Prerequisites
+
+- **[Bun](https://bun.sh)** (v1.0+) installed on your development machine.
+- `make` utility for build automation.
+- An R36S device running ArkOS, AmberELEC, or ROCKNIX connected to your local network (for SSH deployment).
+
+---
+
+## 🚀 Quick Start
+
+### 1. Install Dependencies
+Installs developer type definitions for Node/TypeScript:
 ```bash
 bun install
 ```
 
-This installs dev dependencies (`@types/node`) used for TypeScript type checking.
+### 2. Build
+Compile the source code into a standalone Linux ARM64 binary (`r36s-app/r36s-app`):
 
-## Build
+* **Framebuffer version (Default):**
+  ```bash
+  make build
+  ```
+* **Native TUI version:**
+  ```bash
+  make build-native
+  ```
 
-Build the **framebuffer** version (default):
+### 3. Deploy
+Update the SSH configuration (such as `SSH_HOST` or `SSH_USER`) in the [Makefile](file:///Users/sdolai/Documents/github/sdolai/r36s-dashboard/Makefile) or override them on the command line:
 
 ```bash
-make build
+make deploy SSH_HOST=192.168.1.180
 ```
+This target:
+1. Connects to the R36S console via SSH/SCP.
+2. Creates `/roms/ports/r36s-app/` and `/roms/tools/` folders.
+3. Deploys the compiled dashboard binary and the launcher script (`r36s-dashboard.sh`) to their correct paths.
+4. Sets execution permissions.
 
-Build the **native** (terminal) version:
+---
 
-```bash
-make build-native
-```
+## 📦 Manual Installation / Releases
 
-Both commands compile the TypeScript source into a standalone ARM64 binary at `r36s-app/r36s-app` using `bun build --compile --target=bun-linux-arm64`.
+If you prefer not to build from source, you can download precompiled binaries from the [GitHub Releases](https://github.com/sdolai/r36s-dashboard/releases).
 
-## Deploy to Device
+1. Download `r36s-app-framebuffer.zip` (or `r36s-app-native.zip`) and `r36s-dashboard.sh` from the latest release.
+2. Unzip the archive directly into your console's `/roms/ports/` directory (it will create a `r36s-app` subfolder with the binary inside).
+3. Copy `r36s-dashboard.sh` into your console's `/roms/tools/` directory.
+4. Ensure script executable permissions: `chmod +x /roms/tools/r36s-dashboard.sh`.
 
-Requires SSH access to the R36S (edit the IP address in the `Makefile` to match your device).
+Once installed, the dashboard will appear under the **Options** or **Tools** menu in EmulationStation.
 
-```bash
-# Deploy to Device
-make deploy
-```
+---
 
-This builds and copies the binary to `/roms/ports/r36s-app/` on the device via SCP.
-Must enable Remote Services on device for it to work.
+## 💻 Local Development
 
-## Device Setup
-
-1. Copy `r36s-app/r36s-app` and `r36s-app.sh` to `/roms/ports/r36s-app/` on the device
-2. The launcher script (`r36s-app.sh`) handles:
-   - Terminal buffer reset and cursor blanking
-   - Binary permission setup
-   - Stderr logging to `error.log`
-   - Post-exit cleanup and return to EmulationStation
-
-## Local Development
-
-Run locally with the `--dry-run` flag to skip hardware access:
+Test the application on your computer using the `--dry-run` flag to skip direct hardware calls:
 
 ```bash
-# Framebuffer version (skips /dev/fb0)
+# Test Framebuffer version (simulates /dev/fb0 drawing)
 bun main.ts --dry-run
 
-# Native version (renders to stdout instead of /dev/tty1)
+# Test Native TUI version (draws directly to terminal stdout)
 bun main-native.ts --dry-run
 ```
 
-Uses keyboard input: arrow keys to navigate, `[`/`]` for L1/R1, `q` or Ctrl+C to quit.
+### Keyboard Controls (Simulation Mode)
+- **Arrow Keys**: Navigate / Page layout actions
+- **`[` / `]`**: Trigger L1 / R1 page switches
+- **`q`** or **Ctrl+C**: Exit
 
-## Features
+---
 
-### Dashboard Pages
+## ✨ Features & Architecture
 
-Navigate with **L1/R1** or **D-pad Left/Right**.
+### 📊 Dashboard Pages
+Navigate layouts with the gamepad's **L1/R1** bumpers or **D-Pad Left/Right**.
 
-| Page | Content |
-|------|---------|
-| **Status** | CPU/memory usage bars, CPU temperature, load average, uptime, heap usage |
-| **System** | Platform, runtime version, PID, root device, CWD, environment variables |
-| **Debug** | Live SELECT/START held state, raw evdev event log with press/release tracking |
-| **About** | Hardware specs, version info, control reference |
+* **Status**: Live bars for CPU & memory, system temperature, load averages, uptime, and Bun heap metrics.
+* **System**: OS details, Bun runtime, PID, root device mounting, working directory, and environment details.
+* **Debug**: Real-time controller button presses, evdev input logging, and SELECT/START state indicator.
+* **About**: Device hardware profile, firmware/software information, and gamepad button legend.
 
-### Gamepad Input
+### 🎮 Gamepad Input (evdev)
+- Monitors `/dev/input/event*` devices natively.
+- Decodes standard 24-byte Linux `struct input_event` blocks.
+- Maps standard keys (`BTN_SELECT` / `BTN_START`) as well as `BTN_TRIGGER_HAPPY` codes (704–709) used by the Panel 4 clone controller driver on the R36S.
+- **Exit combo**: Press **SELECT + START** together.
 
-- Reads all `/dev/input/event*` devices via Linux evdev
-- Parses 24-byte `struct input_event`: `EV_KEY` for buttons, `EV_ABS` for D-pad hat
-- Handles both standard `BTN_SELECT`/`BTN_START` (314/315) and `BTN_TRIGGER_HAPPY` codes (704-709) used by the R36S Panel 4 ODROID-GO2 joypad driver
-- SELECT+START combo to exit
+### 🐧 Native TUI Details
+The console terminal variant:
+- Outputs directly to `/dev/tty1`.
+- Manages console key-mapping lifecycles (`gptokeyb` process wrapper, if present at `/opt/inttools/gptokeyb`).
+- Handles terminal resets, blanking, and hides the cursor console text overlays on start, restoring it on exit.
+- Autodetects terminal grid dimensions dynamically using `stty size` (falls back to 80x30 standard).
 
-### Native Version Extras
+---
 
-The native build (`main-native.ts`) follows R36S script conventions:
+## 🕹️ Controller Layout
 
-- Outputs directly to `/dev/tty1`
-- Manages `gptokeyb` lifecycle for controller-to-keyboard mapping (if available at `/opt/inttools/gptokeyb`)
-- Sets `TERM=linux` and resets the terminal on startup/exit
-- Auto-detects terminal dimensions via `stty size`, falls back to 80x30 (640x480 / 8x16 font)
+| Gamepad Button | Action |
+| :--- | :--- |
+| **L1 / R1** | Switch Pages |
+| **D-Pad Left / Right** | Switch Pages |
+| **SELECT + START** | Exit Application |
+| **q** / **Ctrl+C** | Emergency keyboard exit |
 
-## Controls
+---
 
-| Button | Action |
-|--------|--------|
-| L1 / R1 | Switch page |
-| D-pad Left / Right | Switch page |
-| SELECT + START | Exit application |
-| q / Ctrl+C | Exit (keyboard fallback) |
+## 🎯 Target Hardware & Compatibility
 
-## Target Hardware
+The dashboard has been verified and tested on **R36S Panel 4** hardware revisions.
 
-| Spec | Value |
-|------|-------|
-| Device | R36S Panel 4 |
-| SoC | Rockchip RK3326 |
-| Architecture | ARM64 (aarch64) |
-| Display | 640x480 @ 32bpp BGRA |
-| OS | ArkOS / ROCKNIX / AmberELEC |
-| Framebuffer | `/dev/fb0` |
-| Input | `/dev/input/event*` (evdev) |
+| Specification | Value / Target |
+| :--- | :--- |
+| **Device** | R36S (Panel 4) |
+| **SoC** | Rockchip RK3326 |
+| **Architecture** | ARM64 (`aarch64`) |
+| **Display** | 640x480 @ 32bpp BGRA |
+| **Supported OS** | ArkOS / ROCKNIX / AmberELEC |
+| **Framebuffer** | `/dev/fb0` |
+| **Input Interface** | Linux `evdev` (`/dev/input/event*`) |
 
-## Project Structure
+---
+
+## 📂 Project Structure
 
 ```
 .
-├── main.ts            # Framebuffer version (renders to /dev/fb0)
-├── main-native.ts     # Native terminal version (ANSI on /dev/tty1)
-├── package.json       # Project metadata and dev dependencies
-├── Makefile           # Build and deploy commands
-├── r36s-app.sh        # Launcher script for the device
+├── .github/workflows/
+│   └── release.yml        # CI/CD Automated release pipeline
+├── main.ts                # Framebuffer source code (draws to /dev/fb0)
+├── main-native.ts         # Native TUI source code (ANSI console)
+├── Makefile               # Automated build & deploy scripts
+├── r36s-dashboard.sh      # Console launcher script (runs in tools)
+├── package.json           # Project configuration & script shortcuts
 └── r36s-app/
-    └── r36s-app       # Compiled ARM64 binary (after build)
+    └── r36s-app           # Compiled output binary (created after build)
 ```
 
-## License
+---
 
-ISC
+## 📄 License
+
+This project is licensed under the **ISC License**. See the `LICENSE` file (if present) or package metadata for details.
