@@ -52,5 +52,5 @@ deploy:
 	fi
 	@echo "🚀 Deploying to R36S device at $(SSH_HOST)..."
 	ssh $(SSH_USER)@$(SSH_HOST) "mkdir -p $(DEPLOY_DIR) && rm -f $(DEPLOY_DIR)/r36s-app"
-	scp $(OUT_FILE) $(SSH_USER)@$(SSH_HOST):$(DEPLOY_DIR)/r36s-app
+	scp -C $(OUT_FILE) $(SSH_USER)@$(SSH_HOST):$(DEPLOY_DIR)/r36s-app
 	@echo "🎉 Deployment successful!"
