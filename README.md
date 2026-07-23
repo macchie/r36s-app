@@ -2,7 +2,7 @@
 
 [![Bun Version](https://img.shields.io/badge/Bun-%3E%3D1.0-blue?logo=bun&logoColor=white)](https://bun.sh)
 [![Platform](https://img.shields.io/badge/Platform-R36S%20%2F%20RK3326-red)](https://github.com/sdolai/r36s-dashboard)
-[![Release](https://img.shields.io/github/v/release/sdolai/r36s-dashboard?color=green&logo=github)](https://github.com/sdolai/r36s-dashboard/releases)
+[![Release](https://img.shields.io/github/v/release/sdolai/r36s-dashboard?color=green&logo=github)](https://github.com/Dattebayooooo/r36s-dashboard/releases)
 [![License: ISC](https://img.shields.io/badge/License-ISC-yellow.svg)](https://opensource.org/licenses/ISC)
 
 A premium system status dashboard for the **R36S handheld gaming console** (Panel 4 / Rockchip RK3326 SoC). Built in **TypeScript** and compiled into a single self-contained, high-performance ARM64 binary with [Bun](https://bun.sh).
@@ -14,10 +14,10 @@ A premium system status dashboard for the **R36S handheld gaming console** (Pane
 
 ## 📺 Build Variants
 
-| Variant | Entry Point | Rendering Engine | Description |
-| :--- | :--- | :--- | :--- |
-| **Framebuffer** | `main.ts` | `/dev/fb0` direct pixel writes | Standard GUI with 8x8 bitmap font, 640x480 BGRA 32bpp resolution. |
-| **Native TUI** | `main-native.ts` | ANSI escape codes on `/dev/tty1` | Terminal UI using 16-color VT escape codes (80x30 characters, using the console's 8x16 font). |
+| Variant         | Entry Point      | Rendering Engine                 | Description                                                                                   |
+| :-------------- | :--------------- | :------------------------------- | :-------------------------------------------------------------------------------------------- |
+| **Framebuffer** | `main.ts`        | `/dev/fb0` direct pixel writes   | Standard GUI with 8x8 bitmap font, 640x480 BGRA 32bpp resolution.                             |
+| **Native TUI**  | `main-native.ts` | ANSI escape codes on `/dev/tty1` | Terminal UI using 16-color VT escape codes (80x30 characters, using the console's 8x16 font). |
 
 Both versions read controller inputs directly via Linux `evdev` (`/dev/input/event*`) and support a `--dry-run` flag for convenient local testing.
 
@@ -124,12 +124,12 @@ The console terminal variant:
 
 ## 🕹️ Controller Layout
 
-| Gamepad Button | Action |
-| :--- | :--- |
-| **L1 / R1** | Switch Pages |
-| **D-Pad Left / Right** | Switch Pages |
-| **SELECT + START** | Exit Application |
-| **q** / **Ctrl+C** | Emergency keyboard exit |
+| Gamepad Button         | Action                  |
+| :--------------------- | :---------------------- |
+| **L1 / R1**            | Switch Pages            |
+| **D-Pad Left / Right** | Switch Pages            |
+| **SELECT + START**     | Exit Application        |
+| **q** / **Ctrl+C**     | Emergency keyboard exit |
 
 ---
 
@@ -137,14 +137,14 @@ The console terminal variant:
 
 The dashboard has been verified and tested on **R36S Panel 4** hardware revisions.
 
-| Specification | Value / Target |
-| :--- | :--- |
-| **Device** | R36S (Panel 4) |
-| **SoC** | Rockchip RK3326 |
-| **Architecture** | ARM64 (`aarch64`) |
-| **Display** | 640x480 @ 32bpp BGRA |
-| **Supported OS** | ArkOS / ROCKNIX / AmberELEC |
-| **Framebuffer** | `/dev/fb0` |
+| Specification       | Value / Target                      |
+| :------------------ | :---------------------------------- |
+| **Device**          | R36S (Panel 4)                      |
+| **SoC**             | Rockchip RK3326                     |
+| **Architecture**    | ARM64 (`aarch64`)                   |
+| **Display**         | 640x480 @ 32bpp BGRA                |
+| **Supported OS**    | ArkOS / ROCKNIX / AmberELEC         |
+| **Framebuffer**     | `/dev/fb0`                          |
 | **Input Interface** | Linux `evdev` (`/dev/input/event*`) |
 
 ---
