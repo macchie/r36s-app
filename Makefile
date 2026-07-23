@@ -3,9 +3,11 @@ SSH_USER ?= ark
 SSH_HOST ?= 192.168.1.180
 
 # Build paths
+ROM_LOCATION := $(shell if mountpoint -q /roms2 2>/dev/null; then echo "/roms2"; else echo "/roms"; fi)
+
 OUT_DIR = ./r36s-app
 OUT_FILE = $(OUT_DIR)/r36s-app
-DEPLOY_DIR = /roms/ports/r36s-app
+DEPLOY_DIR = ${ROM_LOCATION}/ports/r36s-app
 
 # Bun configuration
 BUN = bun

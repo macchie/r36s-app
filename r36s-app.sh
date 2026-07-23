@@ -5,9 +5,15 @@
 # Target: Panel 4 Hardware Revisions (RK3326)
 # ==============================================================================
 
+
+ROM_LOCATION="/roms"
+if mountpoint -q /roms2; then
+    ROM_LOCATION="/roms2"
+fi
+
 # 1. Configuration - Adjust these to match your file structure
 APP_NAME="r36s-app"
-APP_DIR="/roms/ports/r36s-app"
+APP_DIR="${ROM_LOCATION}/ports/r36s-app"
 BINARY_NAME="r36s-app"
 LOG_FILE="$APP_DIR/error.log"
 
