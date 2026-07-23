@@ -8,6 +8,7 @@ ROM_LOCATION := $(shell if mountpoint -q /roms2 2>/dev/null; then echo "/roms2";
 OUT_DIR = ./r36s-app
 OUT_FILE = $(OUT_DIR)/r36s-app
 DEPLOY_DIR = ${ROM_LOCATION}/ports/r36s-app
+TOOLS_DIR = ${ROM_LOCATION}/tools
 
 # Bun configuration
 BUN = bun
@@ -51,6 +52,8 @@ deploy:
 		exit 1; \
 	fi
 	@echo "🚀 Deploying to R36S device at $(SSH_HOST)..."
-	ssh $(SSH_USER)@$(SSH_HOST) "mkdir -p $(DEPLOY_DIR) && rm -f $(DEPLOY_DIR)/r36s-app"
+	ssh $(SSH_USER)@$(SSH_HOST) "mkdir -p $(DEPLOY_DIR) $(TOOLS_DIR) && rm -f $(DEPLOY_DIR)/r36s-app $(TOOLS_DIR)/r36s-dashboard.sh"
 	scp -C $(OUT_FILE) $(SSH_USER)@$(SSH_HOST):$(DEPLOY_DIR)/r36s-app
+	scp -C r36s-dashboard.sh $(SSH_USER)@$(SSH_HOST):$(TOOLS_DIR)/r36s-dashboard.sh
+	ssh $(SSH_USER)@$(SSH_HOST) "chmod +x $(TOOLS_DIR)/r36s-dashboard.sh"
 	@echo "🎉 Deployment successful!"

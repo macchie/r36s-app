@@ -45,7 +45,7 @@ jobs:
           files: |
             r36s-app-framebuffer.zip
             r36s-app-native.zip
-            r36s-app.sh
+            r36s-dashboard.sh
           draft: false
           prerelease: false
         env:
