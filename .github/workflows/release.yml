@@ -1,0 +1,52 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name for the release'
+        required: false
+        default: 'latest-dev'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Build Framebuffer Version
+        run: |
+          make build
+          # Package the framebuffer version (excluding the launch script)
+          zip -r r36s-app-framebuffer.zip r36s-app/
+
+      - name: Build Native TUI Version
+        run: |
+          make build-native
+          # Package the native version (excluding the launch script)
+          zip -r r36s-app-native.zip r36s-app/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
+          files: |
+            r36s-app-framebuffer.zip
+            r36s-app-native.zip
+            r36s-dashboard.sh
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

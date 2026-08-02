@@ -1,4 +1,45 @@
+# Dependency directories
 node_modules/
+
+# Bun configuration and environments
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local.json
+
+# Build outputs
 r36s-app/
-.claude
-.vscode
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.claude/
+.gemini/
+
+# OS metadata files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
